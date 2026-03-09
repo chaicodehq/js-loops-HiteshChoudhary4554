@@ -3,7 +3,7 @@
  *
  * Bunty apne dost ko paise bhej raha hai UPI se, lekin network thoda
  * flaky hai. Payment kabhi success hota hai, kabhi fail. Bunty ka app
- * automatically retry karta hai with exponential backoff.
+ * automatically retry karta hai with backoff. 
  *
  * Rules (use do...while loop):
  *   - outcomes is an array of strings: "success" or "fail"
@@ -35,5 +35,41 @@
  *   // => { attempts: 5, success: false, totalWaitTime: 15 }
  */
 export function upiRetry(outcomes) {
-  // Your code here
+  if (!Array.isArray(outcomes) || outcomes.length === 0) {
+    return { attempts: 0, success: false, totalWaitTime: 0 }
+  }
+
+  let attempts = 0;
+  let success = false;
+  let totalWaitTime = 0;
+
+  do {
+    let result = outcomes[attempts];
+    attempts++;
+    if (result === "fail") {
+      success = false;
+      if (attempts === 1) {
+         totalWaitTime += 1
+      }else if (attempts === 2) {
+         totalWaitTime += 2;
+      }
+      else if (attempts === 3) {
+         totalWaitTime += 4;
+      }
+      else if (attempts === 4) {
+         totalWaitTime += 8;
+      }
+    }else{
+      success = true
+    }
+    
+  } while (success === false && attempts < 5);
+
+  return {
+    attempts,
+    success,
+    totalWaitTime,
+  }
+
+
 }

@@ -21,7 +21,7 @@
  *   - Agar EMI <= first month's interest (principal * monthlyRate),
  *     toh loan kabhi khatam nahi hoga!
  *     Return: { months: -1, totalPaid: -1, totalInterest: -1 }
- *
+
  * Validation:
  *   - All three params must be positive numbers, else return
  *     { months: -1, totalPaid: -1, totalInterest: -1 }
@@ -42,5 +42,41 @@
  *   // => { months: -1, totalPaid: -1, totalInterest: -1 }
  */
 export function calculateEMI(principal, monthlyRate, emi) {
-  // Your code here
+  if (principal <= 0 || monthlyRate < 0 || emi < 0 || !Number.isInteger(principal)) {
+    return { months: -1, totalPaid: -1, totalInterest: -1 };
+  }
+
+  let firstMonthInterest = principal * monthlyRate
+
+  if (emi <= firstMonthInterest) {
+    return { months: -1, totalPaid: -1, totalInterest: -1 }
+  }
+
+  let remaining = principal;
+  let months = 0;
+  let totalPaid = 0;
+
+  while (remaining > 0) {
+    let interest = remaining * monthlyRate;
+    remaining = remaining + interest
+    if (remaining < emi) {
+      totalPaid = totalPaid + remaining;
+      remaining = 0;
+      months++
+    }else{
+      totalPaid = totalPaid + emi,
+      remaining = remaining - emi;
+      months++
+    }
+  }
+
+let totalInterest = totalPaid - principal;
+totalInterest = Math.round(totalInterest * 100) / 100
+
+  return {
+    months,
+    totalPaid: totalPaid,
+    totalInterest,
+  }
+
 }

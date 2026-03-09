@@ -37,5 +37,95 @@
  *   // Sorted: CSK(3), RCB(1), MI(0)
  */
 export function iplPointsTable(matches) {
-  // Your code here
+  if (!Array.isArray(matches) || matches.length === 0) {
+    return [];
+  }
+
+  let teams = {};
+
+  for (const object of matches) {
+    if (!teams.hasOwnProperty(object.team1)) {
+      teams[object.team1] = {
+        team: "",
+        played: 0,
+        won: 0,
+        lost: 0,
+        tied: 0,
+        noResult: 0,
+        points: 0,
+      };
+    }
+    if (!teams.hasOwnProperty(object.team2)) {
+      teams[object.team2] = {
+        team: "",
+        played: 0,
+        won: 0,
+        lost: 0,
+        tied: 0,
+        noResult: 0,
+        points: 0,
+      };
+    }
+  }
+
+  for (const object of matches) {
+    if (object.result === "win") {
+      let findTeam =
+        object.winner === object.team1 ? object.team1 : object.team2;
+      const winTeam = teams[findTeam];
+      winTeam.team = findTeam;
+      winTeam.played += 1;
+      winTeam.won += 1;
+      winTeam.points += 2;
+
+      let searchTeam =
+        object.winner === object.team1 ? object.team2 : object.team1;
+      const lostTeam = teams[searchTeam];
+      ((lostTeam.team = searchTeam), (lostTeam.played += 1));
+      lostTeam.lost += 1;
+    } else if (object.result === "tie") {
+      let findTeam = object.team2;
+      const team1 = teams[findTeam];
+      team1.team = findTeam;
+      team1.played += 1;
+      team1.points += 1;
+      team1.tied += 1;
+
+      let searchTeam = object.team1;
+      const team2 = teams[searchTeam];
+      team2.team = searchTeam;
+      team2.played += 1;
+      team2.points += 1;
+      team2.tied += 1;
+      
+    } else if (object.result === "no_result") {
+      let findTeam = object.team1;
+      const team1 = teams[findTeam];
+      team1.team = findTeam;
+      team1.played += 1;
+      team1.points += 1;
+      team1.noResult += 1;
+
+      let searchTeam = object.team2;
+      const team2 = teams[searchTeam];
+      team2.team = searchTeam;
+      team2.played += 1;
+      team2.points += 1;
+      team2.noResult += 1;
+    }
+  }
+
+  const matchRecord = [];
+  for (const element of Object.keys(teams)) {
+    matchRecord.push(teams[element]);
+  }
+
+  return matchRecord.sort((a,b)=> {
+    if (b.points !== a.points) {
+      return b.points - a.points;
+    }
+    else{
+      return a.team.localeCompare(b.team);
+    }
+  });
 }

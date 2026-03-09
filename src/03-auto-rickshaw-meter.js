@@ -32,5 +32,26 @@
  *   calculateAutoFare(-2)   // => -1
  */
 export function calculateAutoFare(distance, waitingMinutes = 0) {
-  // Your code here
+  if (distance <= 0 || waitingMinutes < 0 || isNaN(distance) ) {
+    return -1
+  }
+
+  let i = 1
+  let bill = (Math.ceil(waitingMinutes / 2))*5
+  
+  while (i <= Math.ceil(distance)) {
+    if (i === 1) {
+      bill += 30;
+    }
+    else if (i >= 2 && i <=5) {
+      bill += 15;
+    }
+    else if (i > 5) {
+      bill += 10;
+    }
+    i++;
+  }
+
+  return bill;
+ 
 }
